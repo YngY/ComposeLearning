@@ -7,6 +7,8 @@ pipeline {
         GRADLE_OPTS = '-Dorg.gradle.daemon=false'
         GITHUB_TOKEN = credentials('github-token')
         REPO_NAME = 'YngY/ComposeLearning'
+        GIT_AUTHOR_NAME = 'Jenkins'
+        GIT_AUTHOR_EMAIL = 'jenkins@localhost'
     }
 
     stages {
@@ -25,10 +27,6 @@ pipeline {
                     
                     # 接受 Android SDK 许可证
                     yes | sdkmanager --licenses || true
-                    
-                    # 安装必要的 SDK 组件
-                    sdkmanager "platforms;android-34"
-                    sdkmanager "build-tools;34.0.0"
                 '''
             }
         }
@@ -42,71 +40,51 @@ pipeline {
             }
         }
 
-        stage('Build Release APK') {
+        stage('Copy APK to src') {
             steps {
                 sh '''
-                    chmod +x gradlew
-                    ./gradlew assembleRelease --stacktrace
+                    # 创建存放 APK 的目录
+                    mkdir -p src/apk
+                    
+                    # 复制 APK 到 src 目录
+                    cp app/build/outputs/apk/debug/app-debug.apk src/apk/
+                    
+                    # 查看生成的 APK
+                    ls -la src/apk/
                 '''
             }
         }
 
-        stage('Create GitHub Release') {
+        stage('Commit and Push') {
             steps {
-                script {
-                    def version = "v1.0.0-${env.BUILD_NUMBER}"
+                sh '''
+                    cd /home/jenkins/workspace/ComposeLearning-AutoBuild
                     
-                    // 创建 Release
-                    sh """
-                        curl -X POST \
-                        https://api.github.com/repos/${REPO_NAME}/releases \
-                        -H "Authorization: token ${GITHUB_TOKEN}" \
-                        -H "Accept: application/vnd.github.v3+json" \
-                        -d '{
-                            "tag_name": "${version}",
-                            "name": "ComposeLearning ${version}",
-                            "body": "自动构建版本 ${version}\\n\\n构建号: ${env.BUILD_NUMBER}\\n\\n包含内容:\\n- 20+ Jetpack 组件示例\\n- 完整可运行代码",
-                            "draft": false,
-                            "prerelease": false
-                        }'
-                    """
-                }
-            }
-        }
-
-        stage('Upload APK to Release') {
-            steps {
-                script {
-                    def version = "v1.0.0-${env.BUILD_NUMBER}"
+                    # 配置 Git
+                    git config --global user.name "${GIT_AUTHOR_NAME}"
+                    git config --global user.email "${GIT_AUTHOR_EMAIL}"
                     
-                    // 上传 Debug APK
-                    sh """
-                        curl -X POST \
-                        "https://uploads.github.com/repos/${REPO_NAME}/releases/tags/${version}/assets?name=app-debug.apk" \
-                        -H "Authorization: token ${GITHUB_TOKEN}" \
-                        -H "Content-Type: application/vnd.android.package-archive" \
-                        --data-binary "@app/build/outputs/apk/debug/app-debug.apk"
-                    """
+                    # 添加 APK 文件
+                    git add src/apk/app-debug.apk
                     
-                    // 上传 Release APK (如果存在)
-                    sh """
-                        if [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
-                            curl -X POST \
-                            "https://uploads.github.com/repos/${REPO_NAME}/releases/tags/${version}/assets?name=app-release.apk" \
-                            -H "Authorization: token ${GITHUB_TOKEN}" \
-                            -H "Content-Type: application/vnd.android.package-archive" \
-                            --data-binary "@app/build/outputs/apk/release/app-release.apk"
-                        fi
-                    """
-                }
+                    # 检查是否有文件需要提交
+                    if git diff --cached --quiet; then
+                        echo "No changes to commit"
+                    else
+                        # 提交更改
+                        git commit -m "🤖 Jenkins: Build APK v1.0.0-${BUILD_NUMBER}"
+                        
+                        # 推送到 GitHub
+                        git push https://${GITHUB_TOKEN}@github.com/${REPO_NAME}.git main
+                    fi
+                '''
             }
         }
     }
 
     post {
         success {
-            echo "✅ 构建成功！"
-            echo "📦 APK 已上传到 GitHub Releases"
+            echo "✅ 构建成功！APK 已提交到 GitHub"
         }
         failure {
             echo "❌ 构建失败！"
