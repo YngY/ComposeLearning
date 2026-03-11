@@ -86,10 +86,11 @@ app/src/main/java/com/example/composelearning/
 
 ## 运行项目
 
-1. 打开 Android Studio
-2. File → Open → 选择项目目录
-3. 等待 Gradle 同步完成
-4. 运行 app 模块
+1. 在本地克隆项目并构建 APK（详见 [BUILD.md](BUILD.md)）
+2. 或在 Android Studio 中打开并运行
+
+**构建指南:** [BUILD.md](BUILD.md)
+**下载指南:** [DOWNLOAD.md](DOWNLOAD.md)
 
 ## 技术栈
 
