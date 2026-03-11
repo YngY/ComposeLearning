@@ -86,11 +86,14 @@ app/src/main/java/com/example/composelearning/
 
 ## 运行项目
 
-1. 在本地克隆项目并构建 APK（详见 [BUILD.md](BUILD.md)）
-2. 或在 Android Studio 中打开并运行
+### 本地构建
+在本地克隆项目并构建 APK（详见 [BUILD.md](BUILD.md)）
 
-**构建指南:** [BUILD.md](BUILD.md)
-**下载指南:** [DOWNLOAD.md](DOWNLOAD.md)
+### Jenkins 自动构建
+配置 Jenkins 自动构建并上传到 GitHub（详见 [JENKINS_SETUP.md](JENKINS_SETUP.md)）
+
+### Android Studio 运行
+或直接在 Android Studio 中打开并运行
 
 ## 技术栈
 
