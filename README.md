@@ -35,8 +35,22 @@ app/src/main/java/com/example/composelearning/
 │   └── LifecycleDemo.kt         # LifecycleOwner、LiveData
 ├── paging/                      # 分页加载
 │   └── PagingDemo.kt            # Paging 3、无限滚动
-└── coroutines/                  # 协程
-    └── CoroutinesDemo.kt        # launch、async、Flow
+├── coroutines/                  # 协程
+│   └── CoroutinesDemo.kt        # launch、async、Flow
+├── theme/                       # 多主题支持
+│   └── ThemeDemo.kt             # 深色/浅色、动态颜色、自定义主题
+├── camera/                      # 相机
+│   └── CameraXDemo.kt           # 相机预览、拍照、切换摄像头
+├── location/                    # 位置服务
+│   └── LocationDemo.kt          # GPS定位、位置更新、地址查询
+├── media/                       # 媒体
+│   └── Media3Demo.kt            # 视频播放、音频播放
+├── security/                    # 安全
+│   └── SecurityDemo.kt          # 加密存储、哈希、密钥管理
+├── startup/                     # 应用启动
+│   └── StartupDemo.kt           # 初始化器、优化启动
+└── window/                      # 窗口管理
+    └── WindowDemo.kt            # 返回手势、侧滑、多窗口
 ```
 
 ## 学习路线
@@ -60,6 +74,15 @@ app/src/main/java/com/example/composelearning/
 - [x] **lifecycle/** - 生命周期
 - [x] **paging/** - 分页加载
 - [x] **coroutines/** - 协程
+
+### 阶段 4: 高级功能
+- [x] **theme/** - 多主题支持
+- [x] **camera/** - CameraX 相机
+- [x] **location/** - 位置服务
+- [x] **media/** - Media3 媒体播放
+- [x] **security/** - 安全加密
+- [x] **startup/** - 应用启动优化
+- [x] **window/** - 窗口管理
 
 ## 运行项目
 
