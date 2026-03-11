@@ -1,0 +1,41 @@
+name: Build APK Simple
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    container:
+      image: mobiledevops/android-sdk-image:latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Java
+        run: |
+          java -version
+      
+      - name: Grant permissions
+        run: chmod +x gradlew
+      
+      - name: Build Debug APK
+        run: |
+          ./gradlew assembleDebug --stacktrace --info || true
+      
+      - name: Find APK
+        run: |
+          find . -name "*.apk" -type f
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-files
+          path: |
+            **/*.apk
+          retention-days: 90
+        if: always()
